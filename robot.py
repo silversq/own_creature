@@ -9,6 +9,8 @@ class ROBOT:
     def __init__(self, solutionId):
         self.nn = NEURAL_NETWORK("brain" + str(solutionId) + ".nndf")
         self.robotId = p.loadURDF("body.urdf")
+        self.cubeId = p.loadURDF("cube.urdf")
+
         os.system('del brain' + str(solutionId) + '.nndf')
     def Prepare_To_Sense(self):
         self.sensors = {}
@@ -33,11 +35,11 @@ class ROBOT:
                 self.motors[jointName].Set_Value(self.robotId, desiredAngle*c.motorJointAngle)
 
     def Get_Fitness(self, solutionId):
-        stateOfLinkZero = p.getLinkState(self.robotId,0)
-        positionOfLinkZero = stateOfLinkZero[0]
-        xCoordinateOfLinkZero = positionOfLinkZero[0]
+        basePositionAndOrientation = p.getBasePositionAndOrientation(self.cubeId)
+        positionOfLinkZero = basePositionAndOrientation[0]
+        yCoordinateOfLinkZero = positionOfLinkZero[1]
         f = open("tmp" + str(solutionId) + ".txt", "w")
-        f.write(str(xCoordinateOfLinkZero))
+        f.write(str(yCoordinateOfLinkZero))
         f.close()
         os.system("rename tmp" + str(solutionId) + ".txt " + "fitness" + str(solutionId) + ".txt")
     def Think(self):
